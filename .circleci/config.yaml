@@ -1,0 +1,136 @@
+version: 2.1
+
+orbs:
+  npm: lifeway/npm-tools@0.0.6
+  codecov: codecov/codecov@1.0.5
+  aws-cli: circleci/aws-cli@0.1.19
+
+team-context: &team-context CommerceCI
+fingerprint: &fingerprint a8:b6:07:a5:ce:e8:ba:97:2d:63:66:9b:83:76:e4:f4
+
+awsNonProdAccountId: &awsNonProdAccountId "903189529808"
+awsProdAccountId: &awsProdAccountId "754783955455"
+awsIntRole: &awsIntRole commerce-admin-tool-int-static-s3-pipeline-role
+awsUatRole: &awsUatRole commerce-admin-tool-uat-static-s3-pipeline-role
+awsProdRole: &awsProdRole commerce-admin-tool-prod-static-s3-pipeline-role
+
+run-only-on-master: &run-only-on-master
+  filters:
+    branches:
+      only: master
+
+commands:
+  deploy:
+    description: "Deploy the front end app to AWS"
+    parameters:
+      deployTo:
+        type: string
+      awsAccountId:
+        type: string
+      awsAccountRole:
+        type: string
+    steps:
+      - run:
+          name: Setup Environment Variables
+          command: |
+            echo 'export DEPLOY_TO=<< parameters.deployTo >>' >> $BASH_ENV
+            echo 'export AWS_ACCOUNT_ID=<< parameters.awsAccountId >>' >> $BASH_ENV
+            echo 'export AWS_ACCOUNT_ROLE=<< parameters.awsAccountRole >>' >> $BASH_ENV
+            source $BASH_ENV
+      - aws-cli/install
+      - run:
+          command: chmod +x ./scripts/deploy.sh
+      - run: ./scripts/deploy.sh
+  build:
+    description: "Builds the front end app for a specific environment"
+    parameters:
+      adminTool:
+        type: string
+    steps:
+      - run: ADMIN_TOOL_ROOT_URL=<< parameters.adminTool >> npm run build
+
+jobs:
+  test:
+    docker:
+      - image: circleci/node:12
+    steps:
+      - attach_workspace:
+          at: ./
+      - run:
+          name: Test
+          command: npm run ci-test
+      - store_test_results:
+          path: ./junit.xml
+      - codecov/upload:
+          file: ./reports/coverage/coverage-final.json
+  deployToINT:
+    docker:
+      - image: circleci/node:12
+    executor: aws-cli/default
+    steps:
+      - attach_workspace:
+          at: ./
+      - deploy:
+          deployTo: "int"
+          awsAccountId: *awsNonProdAccountId
+          awsAccountRole: *awsIntRole
+  deployToUAT:
+    docker:
+      - image: circleci/node:12
+    executor: aws-cli/default
+    steps:
+      - attach_workspace:
+          at: ./
+      - deploy:
+          deployTo: "uat"
+          awsAccountId: *awsNonProdAccountId
+          awsAccountRole: *awsUatRole
+  deployToPROD:
+    docker:
+      - image: circleci/node:12
+    executor: aws-cli/default
+    steps:
+      - attach_workspace:
+          at: ./
+      - deploy:
+          deployTo: "prod"
+          awsAccountId: *awsProdAccountId
+          awsAccountRole: *awsProdRole
+
+workflows:
+  checks-deploy:
+    jobs:
+      - npm/install:
+          ssh-key-fingerprint: *fingerprint
+      - npm/run-script:
+          name: eslint
+          script: eslint
+          requires:
+            - npm/install
+      - test:
+          requires:
+            - npm/install
+      - deployToINT:
+          <<: *run-only-on-master
+          context: *team-context
+          requires:
+            - test
+            - eslint
+      - holdForUAT:
+          type: approval
+          requires:
+            - deployToINT
+      - deployToUAT:
+          <<: *run-only-on-master
+          context: *team-context
+          requires:
+            - holdForUAT
+      - holdForPROD:
+          type: approval
+          requires:
+            - deployToUAT
+      - deployToPROD:
+          <<: *run-only-on-master
+          context: *team-context
+          requires:
+            - holdForPROD
