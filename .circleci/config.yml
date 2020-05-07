@@ -2,7 +2,7 @@ version: 2.1
 
 orbs:
   npm: lifeway/npm-tools@0.0.6
-  codecov: codecov/codecov@1.0.5
+  #codecov: codecov/codecov@1.0.5
   aws-cli: circleci/aws-cli@0.1.19
 
 team-context: &team-context CommerceCI
@@ -58,11 +58,11 @@ jobs:
           at: ./
       - run:
           name: Test
-          command: npm run ci-test
-      - store_test_results:
-          path: ./junit.xml
-      - codecov/upload:
-          file: ./reports/coverage/coverage-final.json
+          command: npm run test
+      #- store_test_results:
+          #path: ./junit.xml
+      #- codecov/upload:
+          #file: ./reports/coverage/coverage-final.json
   deployToINT:
     docker:
       - image: circleci/node:12
@@ -102,11 +102,11 @@ workflows:
     jobs:
       - npm/install:
           ssh-key-fingerprint: *fingerprint
-      - npm/run-script:
-          name: eslint
-          script: eslint
-          requires:
-            - npm/install
+#      - npm/run-script:
+#          name: eslint
+#          script: eslint
+#          requires:
+#            - npm/install
       - test:
           requires:
             - npm/install
