@@ -59,10 +59,10 @@ jobs:
       - run:
           name: Test
           command: npm run test
-      #- store_test_results:
-          #path: ./junit.xml
-      - codecov/upload:
-          file: ./reports/coverage/coverage-final.json
+#      - store_test_results:
+#          path: ./junit.xml
+#      - codecov/upload:
+#          file: ./reports/coverage/coverage-final.json
   deployToINT:
     docker:
       - image: circleci/node:12
@@ -102,11 +102,11 @@ workflows:
     jobs:
       - npm/install:
           ssh-key-fingerprint: *fingerprint
-      - npm/run-script:
-          name: eslint
-          script: eslint
-          requires:
-            - npm/install
+#      - npm/run-script:
+#          name: eslint
+#          script: eslint
+#          requires:
+#            - npm/install
       - test:
           requires:
             - npm/install
