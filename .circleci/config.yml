@@ -38,9 +38,9 @@ commands:
             echo 'export AWS_ACCOUNT_ROLE=<< parameters.awsAccountRole >>' >> $BASH_ENV
             source $BASH_ENV
       - aws-cli/install
-      - run:
-          command: chmod +x ./scripts/deploy.sh
-      - run: ./scripts/deploy.sh
+#      - run:
+#          command: chmod +x ./scripts/deploy.sh
+#      - run: ./scripts/deploy.sh
   build:
     description: "Builds the front end app for a specific environment"
     parameters:
