@@ -49,6 +49,7 @@ commands:
     steps:
       - run: ADMIN_TOOL_ROOT_URL=<< parameters.adminTool >> npm run build
 
+
 jobs:
   test:
     docker:
