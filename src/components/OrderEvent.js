@@ -5,7 +5,10 @@ class OrderEvent extends React.Component {
 
   render() {
     return (
-      <textarea className="order-sub-event-box" rows="20" disabled="disabled"/>
+      <div className="order-sub-event">
+        <p className="label">Console Output</p>
+        <textarea className="order-sub-event-box" rows="20" disabled="disabled"/>
+      </div>
     );
   }
 }

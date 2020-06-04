@@ -60,11 +60,14 @@
     padding-bottom: 5px;
 }
 
-.order-sub-event-box {
+.order-sub-event {
     position: relative;
     top: 7vh;
     margin-left: 2vw;
     margin-right: 2vw;
+}
+
+.order-sub-event-box {
     width: stretch;
 }
 
