@@ -69,8 +69,8 @@ jobs:
     steps:
       - attach_workspace:
           at: ./
-      - build:
-          command: npm run build
+#      - build:
+#          command: npm run build
       - deploy:
           deployTo: "int"
           awsAccountId: *awsNonProdAccountId
@@ -82,8 +82,8 @@ jobs:
     steps:
       - attach_workspace:
           at: ./
-      - build:
-          command: npm run build
+#      - build:
+#          command: npm run build
       - deploy:
           deployTo: "uat"
           awsAccountId: *awsNonProdAccountId
@@ -95,8 +95,8 @@ jobs:
     steps:
       - attach_workspace:
           at: ./
-      - build:
-          command: npm run build
+#      - build:
+#          command: npm run build
       - deploy:
           deployTo: "prod"
           awsAccountId: *awsProdAccountId
