@@ -60,6 +60,8 @@ jobs:
       - run:
           name: Test
           command: npm run test
+      - store_test_results:
+          path: ./junit.xml
   deployToINT:
     docker:
       - image: circleci/node:12
@@ -67,6 +69,8 @@ jobs:
     steps:
       - attach_workspace:
           at: ./
+      - build:
+          command: npm run build
       - deploy:
           deployTo: "int"
           awsAccountId: *awsNonProdAccountId
@@ -78,6 +82,8 @@ jobs:
     steps:
       - attach_workspace:
           at: ./
+      - build:
+          command: npm run build
       - deploy:
           deployTo: "uat"
           awsAccountId: *awsNonProdAccountId
@@ -89,6 +95,8 @@ jobs:
     steps:
       - attach_workspace:
           at: ./
+      - build:
+          command: npm run build
       - deploy:
           deployTo: "prod"
           awsAccountId: *awsProdAccountId
@@ -99,6 +107,10 @@ workflows:
     jobs:
       - npm/install:
           ssh-key-fingerprint: *fingerprint
+      - npm/audit:
+          whitelist: "1217"
+          requires:
+            - npm/install
       - test:
           requires:
             - npm/install
@@ -106,6 +118,7 @@ workflows:
           <<: *run-only-on-master
           context: *team-context
           requires:
+            - npm/audit
             - test
       - holdForUAT:
           type: approval
