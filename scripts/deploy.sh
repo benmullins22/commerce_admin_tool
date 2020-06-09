@@ -14,8 +14,8 @@ export AWS_ACCESS_KEY_ID=$( echo $output | cut -d' ' -f2)
 export AWS_SECRET_ACCESS_KEY=$( echo $output | cut -d' ' -f4)
 export AWS_SESSION_TOKEN=$( echo $output | cut -d' ' -f5)
 
-#echo "Entering ./dist folder..."
-#cd dist
+echo "Entering ./build folder..."
+cd build
 
 echo "Uploading all files in all dirs except top-level dir"
 # These files all need gzip header and cache control of 1 year
