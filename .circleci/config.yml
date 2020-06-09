@@ -107,10 +107,10 @@ workflows:
     jobs:
       - npm/install:
           ssh-key-fingerprint: *fingerprint
-      - npm/audit:
-          whitelist: "1217"
-          requires:
-            - npm/install
+#      - npm/audit:
+#          whitelist: "1217"
+#          requires:
+#            - npm/install
       - test:
           requires:
             - npm/install
@@ -118,7 +118,7 @@ workflows:
           <<: *run-only-on-master
           context: *team-context
           requires:
-            - npm/audit
+#            - npm/audit
             - test
       - holdForUAT:
           type: approval
