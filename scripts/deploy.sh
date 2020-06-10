@@ -40,4 +40,4 @@ for file in $(find . -maxdepth 1 -type f | grep -v -E '(^./index.html$)' | cut -
 done
 
 echo "Uploading index.html"
-aws s3 cp index.html.gz s3://commerce-admin-tool-${DEPLOY_TO}/index.html --cache-control "public, max-age=0, s-maxage=300" --content-encoding "gzip" --acl public-read || log_and_exit "Failed to copy ${file}"
+aws s3 cp index.html s3://commerce-admin-tool-${DEPLOY_TO}/index.html --cache-control "public, max-age=0, s-maxage=300" --acl public-read || log_and_exit "Failed to copy ${file}"
