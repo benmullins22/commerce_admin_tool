@@ -96,7 +96,7 @@ jobs:
       - attach_workspace:
           at: ./
       - build:
-          adminTool: https://commerce-admin.lifeway.com
+          adminTool: https://commerce-admin.prod.lifeway.com
       - deploy:
           deployTo: "prod"
           awsAccountId: *awsProdAccountId
@@ -107,10 +107,6 @@ workflows:
     jobs:
       - npm/install:
           ssh-key-fingerprint: *fingerprint
-#      - npm/audit:
-#          whitelist: "1217"
-#          requires:
-#            - npm/install
       - test:
           requires:
             - npm/install
@@ -118,7 +114,6 @@ workflows:
           <<: *run-only-on-master
           context: *team-context
           requires:
-#            - npm/audit
             - test
       - holdForUAT:
           type: approval
