@@ -37,7 +37,11 @@
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.5.0",
+    "axios": "^0.19.2",
     "enzyme-adapter-react-16": "^1.15.2",
-    "eslint-plugin-react": "^7.19.0"
+    "eslint-plugin-react": "^7.19.0",
+    "react-router-dom": "^5.2.0",
+    "react-uuid": "^1.0.2",
+    "unstated-next": "^1.1.0"
   }
 }
